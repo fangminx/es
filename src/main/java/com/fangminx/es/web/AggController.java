@@ -30,6 +30,32 @@ public class AggController {
      *（2）然后在每个country分组内，再按照入职年限进行分组
      *（3）最后计算每个分组内的平均薪资
      */
+//GET /company/employee/_search
+//    {
+//        "size": 0,
+//            "aggs": {
+//        "group_by_country": {
+//            "terms": {
+//                "field": "country"
+//            },
+//            "aggs": {
+//                "group_by_join_date": {
+//                    "date_histogram": {
+//                        "field": "join_date",
+//                                "interval": "year"
+//                    },
+//                    "aggs": {
+//                        "avg_salary": {
+//                            "avg": {
+//                                "field": "salary"
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
     @GetMapping
     public String agg(){
         SearchResponse searchResponse = esClient.prepareSearch("company")
