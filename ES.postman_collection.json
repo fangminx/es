@@ -1,0 +1,968 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ES",
+		"_postman_id": "6133011c-7088-cfc9-89ed-dbbb34d30c36",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1.入门",
+			"description": "",
+			"item": [
+				{
+					"name": "检查ES是否启动成功",
+					"request": {
+						"url": {
+							"raw": "localhost:9200?pretty",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"query": [
+								{
+									"key": "pretty",
+									"value": "",
+									"equals": false,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "快速检查集群的健康状况",
+					"request": {
+						"url": {
+							"raw": "localhost:9200/_cat/health?v",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_cat",
+								"health"
+							],
+							"query": [
+								{
+									"key": "v",
+									"value": "",
+									"equals": false,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "green：每个索引的primary shard和replica shard都是active状态的\n\nyellow：每个索引的primary shard都是active状态的，但是部分replica shard不是active状态，处于不可用的状态\n\nred：不是所有索引的primary shard都是active状态的，部分索引有数据丢失了"
+					},
+					"response": []
+				},
+				{
+					"name": "快速查看集群中有哪些索引",
+					"request": {
+						"url": {
+							"raw": "localhost:9200/_cat/indices?v",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_cat",
+								"indices"
+							],
+							"query": [
+								{
+									"key": "v",
+									"value": "",
+									"equals": false,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "创建文档/全量替换文档",
+					"request": {
+						"url": {
+							"raw": "localhost:9200/ecommerce/product/1?version=16&version_type=external",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"ecommerce",
+								"product",
+								"1"
+							],
+							"query": [
+								{
+									"key": "version",
+									"value": "16",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "version_type",
+									"value": "external",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"name\" : \"gaolujie yagao\", \"desc\" : \"gaoxiao meibai\", \"price\" : 30, \"producer\" : \"gaolujie producer\", \"tags\": [ \"meibai\", \"fangzhu\" ] }\r\n\r\n"
+						},
+						"description": "es会自动建立index和type，不需要提前创建，而且es默认会对document每个field都建立倒排索引，让其可以被搜索\r\n\r\nPUT /ecommerce/product/1\r\n{\r\n    \"name\" : \"gaolujie yagao\",\r\n    \"desc\" :  \"gaoxiao meibai\",\r\n    \"price\" :  30,\r\n    \"producer\" :      \"gaolujie producer\",\r\n    \"tags\": [ \"meibai\", \"fangzhu\" ]\r\n}\r\n\r\nPUT /ecommerce/product/2\r\n{\r\n    \"name\" : \"jiajieshi yagao\",\r\n    \"desc\" :  \"youxiao fangzhu\",\r\n    \"price\" :  25,\r\n    \"producer\" :      \"jiajieshi producer\",\r\n    \"tags\": [ \"fangzhu\" ]\r\n}\r\n\r\nPUT /ecommerce/product/3\r\n{\r\n    \"name\" : \"zhonghua yagao\",\r\n    \"desc\" :  \"caoben zhiwu\",\r\n    \"price\" :  40,\r\n    \"producer\" :      \"zhonghua producer\",\r\n    \"tags\": [ \"qingxin\" ]\r\n}"
+					},
+					"response": []
+				},
+				{
+					"name": "检索文档",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n\r\n"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "局部更新文档",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/1/_update",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"doc\": {\r\n    \"name\": \"jiaqiangban gaolujie yagao\"\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "删除文档",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/1",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2.多种搜索方式",
+			"description": "",
+			"item": [
+				{
+					"name": "搜索全部",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "took：耗费了几毫秒\r\n\r\ntimed_out：是否超时，这里是没有\r\n\r\n_shards：数据拆成了5个分片，所以对于搜索请求，会打到所有的primary shard（或者是它的某个replica shard也可以）\r\n\r\nhits.total：查询结果的数量，3个document\r\n\r\nhits.max_score：score的含义，就是document对于一个search的相关度的匹配分数，越相关，就越匹配，分数也高\r\n\r\nhits.hits：包含了匹配搜索的document的详细数据"
+					},
+					"response": []
+				},
+				{
+					"name": "query string方式",
+					"request": {
+						"url": {
+							"raw": "localhost:9200/ecommerce/product/_search?q=name:yagao&sort=price:desc",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"ecommerce",
+								"product",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "name:yagao",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "sort",
+									"value": "price:desc",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "搜索商品名称中包含yagao的商品，而且按照售价降序排序"
+					},
+					"response": []
+				},
+				{
+					"name": "query DSL方式",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"query\": { \"match_all\": {} }, \"_source\": [\"name\", \"price\"] }"
+						},
+						"description": "DSL：Domain Specified Language，特定领域的语言\n\n\n查询所有的商品\n\nGET /ecommerce/product/_search\n{\n  \"query\": { \"match_all\": {} }\n}\n\n查询名称包含yagao的商品，同时按照价格降序排序\n\nGET /ecommerce/product/_search\n{\n    \"query\" : {\n        \"match\" : {\n            \"name\" : \"yagao\"\n        }\n    },\n    \"sort\": [\n        { \"price\": \"desc\" }\n    ]\n}\n\n分页查询商品，总共3条数据，从第2条查，每次查1条\n\nGET /ecommerce/product/_search\n{\n  \"query\": { \"match_all\": {} },\n  \"from\": 1,\n  \"size\": 1\n}\n\n查询出来的结果只显示商品的名称和价格\n\nGET /ecommerce/product/_search\n{\n  \"query\": { \"match_all\": {} },\n  \"_source\": [\"name\", \"price\"]\n}"
+					},
+					"response": []
+				},
+				{
+					"name": "query filter",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\" : {\r\n        \"bool\" : {\r\n            \"must\" : {\r\n                \"match\" : {\r\n                    \"name\" : \"yagao\" \r\n                }\r\n            },\r\n            \"filter\" : {\r\n                \"range\" : {\r\n                    \"price\" : { \"gt\" : 25 } \r\n                }\r\n            }\r\n        }\r\n    }\r\n}"
+						},
+						"description": "搜索商品名称包含yagao，而且售价大于25元的商品"
+					},
+					"response": []
+				},
+				{
+					"name": "full-text search（全文检索）",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\" : {\r\n        \"match\" : {\r\n            \"producer\" : \"yagao producer\"\r\n        }\r\n    }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "phrase search（短语搜索）",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\" : {\r\n        \"match_phrase\" : {\r\n            \"producer\" : \"jiajieshi pro\"\r\n        }\r\n    }\r\n}"
+						},
+						"description": "全文检索会将输入的搜索串拆解开来，去倒排索引里面去一一匹配，只要能匹配上任意一个拆解后的单词，就可以作为结果返回\n\nphrase search，要求输入的搜索串，必须在指定的字段文本中，完全包含一模一样的，才可以算匹配，才能作为结果返回"
+					},
+					"response": []
+				},
+				{
+					"name": "highlight search（高亮搜索结果）",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\" : {\r\n        \"match\" : {\r\n            \"producer\" : \"producer\"\r\n        }\r\n    },\r\n    \"highlight\": {\r\n        \"fields\" : {\r\n            \"producer\" : {}\r\n        }\r\n    }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3.简单聚合分析",
+			"description": "",
+			"item": [
+				{
+					"name": "计算每个tag下的商品数量",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"aggs\": {\r\n    \"group_by_tags\": {\r\n      \"terms\": { \"field\": \"tags\" }\r\n    }\r\n  }\r\n}"
+						},
+						"description": "会发现报错，解决方案：\r\n将文本field的fielddata属性设置为true\r\n\r\nPUT /ecommerce/_mapping/product\r\n{\r\n  \"properties\": {\r\n    \"tags\": {\r\n      \"type\": \"text\",\r\n      \"fielddata\": true\r\n    }\r\n  }\r\n}"
+					},
+					"response": []
+				},
+				{
+					"name": "计算每个tag下的商品数量报错，解决方案",
+					"request": {
+						"url": "localhost:9200/ecommerce/_mapping/product",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"properties\": {\r\n    \"tags\": {\r\n      \"type\": \"text\",\r\n      \"fielddata\": true\r\n    }\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "计算每个tag下的商品数量 (不显示查询结果)",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"size\": 0,\r\n  \"aggs\": {\r\n    \"group_by_tags\": {\r\n      \"terms\": { \"field\": \"tags\" }\r\n    }\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "第二个聚合分析的需求",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"size\": 0,\r\n  \"query\": {\r\n    \"match\": {\r\n      \"name\": \"yagao\"\r\n    }\r\n  },\r\n  \"aggs\": {\r\n    \"all_tags\": {\r\n      \"terms\": {\r\n        \"field\": \"tags\"\r\n      }\r\n    }\r\n  }\r\n}"
+						},
+						"description": "对名称中包含yagao的商品，计算每个tag下的商品数量"
+					},
+					"response": []
+				},
+				{
+					"name": "第三个聚合分析的需求",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"size\": 0,\r\n    \"aggs\" : {\r\n        \"group_by_tags\" : {\r\n            \"terms\" : { \"field\" : \"tags\" },\r\n            \"aggs\" : {\r\n                \"avg_price\" : {\r\n                    \"avg\" : { \"field\" : \"price\" }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}"
+						},
+						"description": "先分组，再计算每个tag下的商品的平均价格"
+					},
+					"response": []
+				},
+				{
+					"name": "第四个数据分析需求",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"size\": 0,\r\n    \"aggs\" : {\r\n        \"all_tags\" : {\r\n            \"terms\" : { \"field\" : \"tags\", \"order\": { \"avg_price\": \"desc\" } },\r\n            \"aggs\" : {\r\n                \"avg_price\" : {\r\n                    \"avg\" : { \"field\" : \"price\" }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}"
+						},
+						"description": "计算每个tag下的商品的平均价格，并且按照平均价格降序排序"
+					},
+					"response": []
+				},
+				{
+					"name": "第五个数据分析需求",
+					"request": {
+						"url": "localhost:9200/ecommerce/product/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"size\": 0,\r\n  \"aggs\": {\r\n    \"group_by_price\": {\r\n      \"range\": {\r\n        \"field\": \"price\",\r\n        \"ranges\": [\r\n          {\r\n            \"from\": 0,\r\n            \"to\": 20\r\n          },\r\n          {\r\n            \"from\": 20,\r\n            \"to\": 40\r\n          },\r\n          {\r\n            \"from\": 40,\r\n            \"to\": 50\r\n          }\r\n        ]\r\n      },\r\n      \"aggs\": {\r\n        \"group_by_tags\": {\r\n          \"terms\": {\r\n            \"field\": \"tags\"\r\n          },\r\n          \"aggs\": {\r\n            \"average_price\": {\r\n              \"avg\": {\r\n                \"field\": \"price\"\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  }\r\n}"
+						},
+						"description": "按照指定的价格范围区间进行分组，然后在每组内再按照tag进行分组，最后再计算每组的平均价格"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4.深入搜索",
+			"description": "",
+			"item": [
+				{
+					"name": "手动指定index的分片信息",
+					"request": {
+						"url": "localhost:9200/test_index1",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"settings\" : {\r\n      \"number_of_shards\" : 3,\r\n      \"number_of_replicas\" : 1\r\n   }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "自动生成id方式创建document（不能用put）",
+					"request": {
+						"url": "localhost:9200/test_index/test_type",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"test_content\": \"my test\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "object field",
+					"request": {
+						"url": "localhost:9200/company/employee/3",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " { \"address\": { \"country\": \"china\", \"province\": \"shanxi\", \"city\": \"xian\" }, \"name\": \"marry\", \"age\": 35, \"join_date\": \"2015-01-01\" }"
+						},
+						"description": "PUT /company/employee/1\r\n{\r\n  \"address\": {\r\n    \"country\": \"china\",\r\n    \"province\": \"guangdong\",\r\n    \"city\": \"guangzhou\"\r\n  },\r\n  \"name\": \"jack\",\r\n  \"age\": 27,\r\n  \"join_date\": \"2017-01-01\"\r\n}\r\n\r\nPUT /company/employee/2\r\n{\r\n  \"address\": {\r\n    \"country\": \"china\",\r\n    \"province\": \"jiangsu\",\r\n    \"city\": \"nanjing\"\r\n  },\r\n  \"name\": \"tom\",\r\n  \"age\": 30,\r\n  \"join_date\": \"2016-01-01\"\r\n}\r\n\r\nPUT /company/employee/3\r\n{\r\n  \"address\": {\r\n    \"country\": \"china\",\r\n    \"province\": \"shanxi\",\r\n    \"city\": \"xian\"\r\n  },\r\n  \"name\": \"marry\",\r\n  \"age\": 35,\r\n  \"join_date\": \"2015-01-01\"\r\n}"
+					},
+					"response": []
+				},
+				{
+					"name": "查看object field的mapping",
+					"request": {
+						"url": "localhost:9200/company/_mapping/employee",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "filter过滤示例",
+					"request": {
+						"url": "localhost:9200/company/employee/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": {\n    \"bool\": {\n      \"must\": [\n        {\n          \"match\": {\n            \"join_date\": \"2016-01-01\"\n          }\n        }\n      ],\n      \"filter\": {\n        \"range\": {\n          \"age\": {\n            \"gte\": 30\n          }\n        }\n      }\n    }\n  }\n}"
+						},
+						"description": "年龄必须大于等于30，同时join_date必须是2016-01-01"
+					},
+					"response": []
+				},
+				{
+					"name": "filter不带相关度分数，强加，分数为1",
+					"request": {
+						"url": "localhost:9200/company/employee/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": {\n    \"constant_score\": {\n      \"filter\": {\n        \"range\": {\n          \"age\": {\n            \"gte\": 30\n          }\n        }\n      }\n    }\n  }\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "定位不合法搜索",
+					"request": {
+						"url": {
+							"raw": "localhost:9200/test_index/test_type/_validate/query?explain",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"test_index",
+								"test_type",
+								"_validate",
+								"query"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": "",
+									"equals": false,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": {\n    \"match-match\": {\n      \"test_field\": \"test\"\n    }\n  }\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "field索引两次防止分词影响排序1",
+					"request": {
+						"url": "localhost:9200/website ",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mappings\": {\n    \"article\": {\n      \"properties\": {\n        \"title\": {\n          \"type\": \"text\",\n          \"fields\": {\n            \"raw\": {\n              \"type\": \"string\",\n              \"index\": \"not_analyzed\"\n            }\n          },\n          \"fielddata\": true\n        },\n        \"content\": {\n          \"type\": \"text\"\n        },\n        \"post_date\": {\n          \"type\": \"date\"\n        },\n        \"author_id\": {\n          \"type\": \"long\"\n        }\n      }\n    }\n  }\n}"
+						},
+						"description": "创建mapping过程"
+					},
+					"response": []
+				},
+				{
+					"name": "field索引两次防止分词影响排序2",
+					"request": {
+						"url": "localhost:9200/website/article/3",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " { \"title\": \"third article\", \"content\": \"this is my third article\", \"post_date\": \"2017-01-01\", \"author_id\": 110 }"
+						},
+						"description": "创建索引过程：\n\nPUT /website/article/1\n{\n  \"title\": \"first article\",\n  \"content\": \"this is my first article\",\n  \"post_date\": \"2017-01-01\",\n  \"author_id\": 110\n}\n\nPUT /website/article/2\n{\n  \"title\": \"second article\",\n  \"content\": \"this is my second article\",\n  \"post_date\": \"2017-01-01\",\n  \"author_id\": 110\n}\n\nPUT /website/article/3\n{\n  \"title\": \"third article\",\n  \"content\": \"this is my third article\",\n  \"post_date\": \"2017-01-01\",\n  \"author_id\": 110\n}"
+					},
+					"response": []
+				},
+				{
+					"name": "field索引两次防止分词影响排序3",
+					"request": {
+						"url": "localhost:9200/website/article/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": {\r\n    \"match_all\": {}\r\n  },\r\n  \"sort\": [\r\n    {\r\n      \"title.raw\": {\r\n        \"order\": \"desc\"\r\n      }\r\n    }\r\n  ]\r\n}"
+						},
+						"description": "排序搜索过程"
+					},
+					"response": []
+				},
+				{
+					"name": "查看_score是如何被计算出来的",
+					"request": {
+						"url": {
+							"raw": "localhost:9200/test_index/test_type/_search?explain",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"test_index",
+								"test_type",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": "",
+									"equals": false,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": {\n    \"match\": {\n      \"test_content\": \"my test\"\n    }\n  }\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "分析一个document是如何被匹配上的",
+					"request": {
+						"url": "localhost:9200/test_index/test_type/AWBuqibHl-P9S2piakll/_explain",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": {\n    \"match\": {\n      \"test_content\": \"my test\"\n    }\n  }\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5.JavaApi操作",
+			"description": "",
+			"item": [
+				{
+					"name": "查询",
+					"request": {
+						"url": "localhost:8080/api/get",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "新增/覆盖",
+					"request": {
+						"url": "localhost:8080/api/insert",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "局部修改（新增字段）",
+					"request": {
+						"url": "localhost:8080/api/update",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "删除",
+					"request": {
+						"url": "localhost:8080/api/delete",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "init-data",
+					"request": {
+						"url": "localhost:8080/api/search/init/data",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "根据条件查询",
+					"request": {
+						"url": "localhost:8080/api/search/some",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "es-api-查看索引",
+					"request": {
+						"url": "localhost:9200/company/employee/_search",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "es-api查看mapping",
+					"request": {
+						"url": "localhost:9200/company/_mapping/employee",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "es-api聚合分析报错，先删除之前索引",
+					"request": {
+						"url": "localhost:9200/company",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "es-api聚合分析报错，修改mapping",
+					"request": {
+						"url": "localhost:9200/company",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"mappings\": {\r\n      \"employee\": {\r\n        \"properties\": {\r\n          \"age\": {\r\n            \"type\": \"long\"\r\n          },\r\n          \"country\": {\r\n            \"type\": \"text\",\r\n            \"fields\": {\r\n              \"keyword\": {\r\n                \"type\": \"keyword\",\r\n                \"ignore_above\": 256\r\n              }\r\n            },\r\n            \"fielddata\": true\r\n          },\r\n          \"join_date\": {\r\n            \"type\": \"date\"\r\n          },\r\n          \"name\": {\r\n            \"type\": \"text\",\r\n            \"fields\": {\r\n              \"keyword\": {\r\n                \"type\": \"keyword\",\r\n                \"ignore_above\": 256\r\n              }\r\n            }\r\n          },\r\n          \"position\": {\r\n            \"type\": \"text\",\r\n            \"fields\": {\r\n              \"keyword\": {\r\n                \"type\": \"keyword\",\r\n                \"ignore_above\": 256\r\n              }\r\n            }\r\n          },\r\n          \"salary\": {\r\n            \"type\": \"long\"\r\n          }\r\n        }\r\n      }\r\n    }\r\n}"
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "es-api聚合分析案例（esAPI）",
+					"request": {
+						"url": "localhost:9200/company/employee/_search",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"size\": 0,\r\n  \"aggs\": {\r\n    \"group_by_country\": {\r\n      \"terms\": {\r\n        \"field\": \"country\"\r\n      },\r\n      \"aggs\": {\r\n        \"group_by_join_date\": {\r\n          \"date_histogram\": {\r\n            \"field\": \"join_date\",\r\n            \"interval\": \"year\"\r\n          },\r\n          \"aggs\": {\r\n            \"avg_salary\": {\r\n              \"avg\": {\r\n                \"field\": \"salary\"\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  }\r\n}"
+						},
+						"description": "（1）首先按照country国家来进行分组\r\n（2）然后在每个country分组内，再按照入职年限进行分组\r\n（3）最后计算每个分组内的平均薪资"
+					},
+					"response": []
+				},
+				{
+					"name": "es-api聚合分析案例（javaAPI）",
+					"request": {
+						"url": "localhost:8080/api/agg",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "（1）首先按照country国家来进行分组\r\n（2）然后在每个country分组内，再按照入职年限进行分组\r\n（3）最后计算每个分组内的平均薪资"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
